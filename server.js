@@ -6,6 +6,11 @@ const PORT = process.env.PORT || 4000;
 // Middleware to parse JSON requests (if necessary)
 app.use(express.json());
 
+// Root route to handle requests to "/"
+app.get('/', (req, res) => {
+    res.send('AutoStore Proxy Server is running.');
+});
+
 // Proxy route to handle API requests
 app.get('/api/*', async (req, res) => {
     const apiUrl = `https://api.unify.autostoresystem.com${req.originalUrl.replace('/api', '')}`;
@@ -28,5 +33,3 @@ app.get('/api/*', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Proxy server running on http://localhost:${PORT}`);
 });
-
-
