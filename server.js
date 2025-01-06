@@ -3,10 +3,10 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware to parse JSON requests (if necessary)
+// Middleware to parse JSON requests
 app.use(express.json());
 
-// Root route to handle requests to "/"
+// Default route for root path
 app.get('/', (req, res) => {
     res.send('AutoStore Proxy Server is running.');
 });
@@ -29,7 +29,13 @@ app.get('/api/*', async (req, res) => {
     }
 });
 
+// Error-handling middleware
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err.stack);
+    res.status(500).send('Internal Server Error');
+});
+
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Proxy server running on http://localhost:${PORT}`);
+    console.log(`Proxy server running on port ${PORT}`);
 });
