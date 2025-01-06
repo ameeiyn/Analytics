@@ -1,10 +1,14 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+
 // Middleware to parse JSON requests
 app.use(express.json());
+
+app.use(cors({ origin: '*' })); // Allow all origins, or restrict to your Netlify domain
 
 // Default route for root path
 app.get('/', (req, res) => {
