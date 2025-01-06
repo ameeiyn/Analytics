@@ -22,7 +22,7 @@ app.get('/api/*', async (req, res) => {
     try {
         const apiResponse = await axios.get(apiUrl, {
             headers: {
-                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi', // Replace with your API key
+                'API-Authorization': '', // Replace with your API key
                 'Content-Type': 'application/json',
             },
         });
