@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 4000;
 
 // Middleware to parse JSON requests (if necessary)
 app.use(express.json());
