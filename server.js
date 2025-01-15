@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 });
 
 // Proxy route to handle API requests for installations
+// Proxy route to handle API requests for installations
 app.get('/api/v1/installations', async (req, res) => {
     const apiUrl = `https://api.unify.autostoresystem.com/v1/installations`;
 
@@ -25,10 +26,12 @@ app.get('/api/v1/installations', async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
+
+        const safeData = JSON.stringify(apiResponse.data, null, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
         res.send(`
             <div>
                 <h1>Installations Data</h1>
-                <pre>${JSON.stringify(apiResponse.data, null, 2)}</pre>
+                <pre>${safeData}</pre>
                 <button onclick="window.location.href='/'">Back to Home</button>
             </div>
         `);
@@ -37,7 +40,7 @@ app.get('/api/v1/installations', async (req, res) => {
         res.status(error.response?.status || 500).send(`
             <div>
                 <h1>Error</h1>
-                <p>Failed to fetch installations data</p>
+                <p>Failed to fetch installations data: ${error.message}</p>
                 <button onclick="window.location.href='/'">Back to Home</button>
             </div>
         `);
@@ -56,10 +59,12 @@ app.get('/api/v1/installations/:installationId/bin-presentations', async (req, r
                 'Content-Type': 'application/json',
             },
         });
+
+        const safeData = JSON.stringify(apiResponse.data, null, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
         res.send(`
             <div>
                 <h1>Bin Presentations for Installation ${installationId}</h1>
-                <pre>${JSON.stringify(apiResponse.data, null, 2)}</pre>
+                <pre>${safeData}</pre>
                 <button onclick="window.location.href='/'">Back to Home</button>
             </div>
         `);
@@ -68,7 +73,7 @@ app.get('/api/v1/installations/:installationId/bin-presentations', async (req, r
         res.status(error.response?.status || 500).send(`
             <div>
                 <h1>Error</h1>
-                <p>Failed to fetch bin presentations data</p>
+                <p>Failed to fetch bin presentations data: ${error.message}</p>
                 <button onclick="window.location.href='/'">Back to Home</button>
             </div>
         `);
