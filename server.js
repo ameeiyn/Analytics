@@ -11,7 +11,7 @@ app.use(cors({ origin: '*' })); // Allow all origins, or restrict to your Netlif
 
 // Default route for root path
 app.get('/', (req, res) => {
-    res.send('AutoStore Proxy Server is running.');
+    res.send('<h1>AutoStore Proxy Server</h1><p>Welcome to the AutoStore Proxy Server.</p>');
 });
 
 // Proxy route to handle API requests for installations
@@ -25,10 +25,22 @@ app.get('/api/v1/installations', async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
-        res.status(apiResponse.status).json(apiResponse.data);
+        res.send(`
+            <div>
+                <h1>Installations Data</h1>
+                <pre>${JSON.stringify(apiResponse.data, null, 2)}</pre>
+                <button onclick="window.location.href='/'">Back to Home</button>
+            </div>
+        `);
     } catch (error) {
         console.error('Error fetching installations:', error.message);
-        res.status(error.response?.status || 500).json({ error: 'Failed to fetch installations data' });
+        res.status(error.response?.status || 500).send(`
+            <div>
+                <h1>Error</h1>
+                <p>Failed to fetch installations data</p>
+                <button onclick="window.location.href='/'">Back to Home</button>
+            </div>
+        `);
     }
 });
 
@@ -44,10 +56,22 @@ app.get('/api/v1/installations/:installationId/bin-presentations', async (req, r
                 'Content-Type': 'application/json',
             },
         });
-        res.status(apiResponse.status).json(apiResponse.data);
+        res.send(`
+            <div>
+                <h1>Bin Presentations for Installation ${installationId}</h1>
+                <pre>${JSON.stringify(apiResponse.data, null, 2)}</pre>
+                <button onclick="window.location.href='/'">Back to Home</button>
+            </div>
+        `);
     } catch (error) {
         console.error('Error fetching bin presentations:', error.message);
-        res.status(error.response?.status || 500).json({ error: 'Failed to fetch bin presentations data' });
+        res.status(error.response?.status || 500).send(`
+            <div>
+                <h1>Error</h1>
+                <p>Failed to fetch bin presentations data</p>
+                <button onclick="window.location.href='/'">Back to Home</button>
+            </div>
+        `);
     }
 });
 
