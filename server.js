@@ -4,96 +4,58 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware to parse JSON requests
+// Middleware
 app.use(express.json());
+app.use(cors({ origin: '*' }));
 
-app.use(cors({ origin: '*' })); // Allow all origins, or restrict to your Netlify domain
-
-// Default route for root path
+// Root route
 app.get('/', (req, res) => {
     res.send('<h1>AutoStore Proxy Server</h1><p>Welcome to the AutoStore Proxy Server.</p>');
 });
 
-// Proxy route to handle API requests for installations
-// Proxy route to handle API requests for installations
+// Fetch installation IDs
 app.get('/api/v1/installations', async (req, res) => {
-    const apiUrl = `https://api.unify.autostoresystem.com/v1/installations`;
-
+    const apiUrl = 'https://api.unify.autostoresystem.com/v1/installations';
     try {
-        const apiResponse = await axios.get(apiUrl, {
+        const { data } = await axios.get(apiUrl, {
             headers: {
-                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi', // Replace with your API key
+                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi',
                 'Content-Type': 'application/json',
             },
         });
-
-// Ensure the response is explicitly returned as JSON
-res.setHeader('Content-Type', 'application/json'); // Set the correct content type
-const safeData = JSON.stringify(apiResponse.data, null, 2)
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;"); // Escape HTML
-
-// Send the data within an HTML structure
-res.send(`
-  <div>
-    <h1>Installations Data</h1>
-    <pre>${safeData}</pre>
-    <button onclick="window.location.href='/'">Back to Home</button>
-  </div>
-`);
-
+        res.json(data); // Send JSON response directly
     } catch (error) {
         console.error('Error fetching installations:', error.message);
-        res.status(error.response?.status || 500).send(`
-            <div>
-                <h1>Error</h1>
-                <p>Failed to fetch installations data: ${error.message}</p>
-                <button onclick="window.location.href='/'">Back to Home</button>
-            </div>
-        `);
+        res.status(error.response?.status || 500).json({
+            error: 'Failed to fetch installations data',
+            details: error.message,
+        });
     }
 });
 
-// Proxy route to handle API requests for bin presentations
+// Fetch bin presentations
 app.get('/api/v1/installations/:installationId/bin-presentations', async (req, res) => {
     const { installationId } = req.params;
     const apiUrl = `https://api.unify.autostoresystem.com/v1/installations/${installationId}/bin-presentations`;
 
     try {
-        const apiResponse = await axios.get(apiUrl, {
+        const { data } = await axios.get(apiUrl, {
             headers: {
-                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi', // Replace with your API key
+                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi',
                 'Content-Type': 'application/json',
             },
         });
-
-        const safeData = JSON.stringify(apiResponse.data, null, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
-        res.send(`
-            <div>
-                <h1>Bin Presentations for Installation ${installationId}</h1>
-                <pre>${safeData}</pre>
-                <button onclick="window.location.href='/'">Back to Home</button>
-            </div>
-        `);
+        res.json(data); // Send JSON response directly
     } catch (error) {
         console.error('Error fetching bin presentations:', error.message);
-        res.status(error.response?.status || 500).send(`
-            <div>
-                <h1>Error</h1>
-                <p>Failed to fetch bin presentations data: ${error.message}</p>
-                <button onclick="window.location.href='/'">Back to Home</button>
-            </div>
-        `);
+        res.status(error.response?.status || 500).json({
+            error: `Failed to fetch bin presentations for installation ${installationId}`,
+            details: error.message,
+        });
     }
 });
 
-// Error-handling middleware
-app.use((err, req, res, next) => {
-    console.error('Unhandled Error:', err.stack);
-    res.status(500).send('Internal Server Error');
-});
-
-// Start the server
+// Start server
 app.listen(PORT, () => {
     console.log(`Proxy server running on port ${PORT}`);
 });
