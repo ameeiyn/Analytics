@@ -27,14 +27,21 @@ app.get('/api/v1/installations', async (req, res) => {
             },
         });
 
-        const safeData = JSON.stringify(apiResponse.data, null, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
-        res.send(`
-            <div>
-                <h1>Installations Data</h1>
-                <pre>${safeData}</pre>
-                <button onclick="window.location.href='/'">Back to Home</button>
-            </div>
-        `);
+// Ensure the response is explicitly returned as JSON
+res.setHeader('Content-Type', 'application/json'); // Set the correct content type
+const safeData = JSON.stringify(apiResponse.data, null, 2)
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;"); // Escape HTML
+
+// Send the data within an HTML structure
+res.send(`
+  <div>
+    <h1>Installations Data</h1>
+    <pre>${safeData}</pre>
+    <button onclick="window.location.href='/'">Back to Home</button>
+  </div>
+`);
+
     } catch (error) {
         console.error('Error fetching installations:', error.message);
         res.status(error.response?.status || 500).send(`
