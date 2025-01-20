@@ -55,6 +55,27 @@ app.get('/api/v1/installations/:installationId/bin-presentations', async (req, r
     }
 });
 
+app.get('/api/v1/installations/:installationId/uptime', async (req, res) => {
+    const { installationId } = req.params;
+    const apiUrl = `https://api.unify.autostoresystem.com/v1/installations/${installationId}/uptime`;
+
+    try {
+        const { data } = await axios.get(apiUrl, {
+            headers: {
+                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi',
+                'Content-Type': 'application/json',
+            },
+        });
+        res.json(data); // Send JSON response directly
+    } catch (error) {
+        console.error('Error fetching uptime:', error.message);
+        res.status(error.response?.status || 500).json({
+            error: `Failed to fetch uptime for installation ${installationId}`,
+            details: error.message,
+        });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Proxy server running on port ${PORT}`);
