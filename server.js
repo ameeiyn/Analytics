@@ -55,6 +55,7 @@ app.get('/api/v1/installations/:installationId/bin-presentations', async (req, r
     }
 });
 
+// Fetch uptime
 app.get('/api/v1/installations/:installationId/uptime', async (req, res) => {
     const { installationId } = req.params;
     const apiUrl = `https://api.unify.autostoresystem.com/v1/installations/${installationId}/uptime`;
@@ -71,6 +72,28 @@ app.get('/api/v1/installations/:installationId/uptime', async (req, res) => {
         console.error('Error fetching uptime:', error.message);
         res.status(error.response?.status || 500).json({
             error: `Failed to fetch uptime for installation ${installationId}`,
+            details: error.message,
+        });
+    }
+});
+
+// Fetch live events
+app.get('/api/v1/installations/:installationId/live-events', async (req, res) => {
+    const { installationId } = req.params;
+    const apiUrl = `https://api.unify.autostoresystem.com/v1/installations/${installationId}/live-events`;
+
+    try {
+        const { data } = await axios.get(apiUrl, {
+            headers: {
+                'API-Authorization': 'iVt5VVIHoynBQBJgFDfCywFSMqCx9N4nfpLndHlVNfdYmOA4CpKQTHFRsNkPgYBi',
+                'Content-Type': 'application/json',
+            },
+        });
+        res.json(data); // Send JSON response directly
+    } catch (error) {
+        console.error('Error fetching live events:', error.message);
+        res.status(error.response?.status || 500).json({
+            error: `Failed to fetch live events for installation ${installationId}`,
             details: error.message,
         });
     }
